@@ -2,6 +2,10 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import userRouter from './routes/userRouter.js';
+import dotenv from 'dotenv';
+import productRouter from './routes/productRouter.js';
+
+dotenv.config();
 
 
 const app = express();
@@ -21,6 +25,7 @@ app.use(bodyParser.json())
 
 
 app.use("/api/users",userRouter);
+app.use("/api/products",productRouter);
 
 
 
