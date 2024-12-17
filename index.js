@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
 import userRouter from './routes/userRouter.js';
 import dotenv from 'dotenv';
 import productRouter from './routes/productRouter.js';
+import jwt from 'jsonwebtoken';
+import orderRouter from './routes/orderRouter.js';
 
 dotenv.config();
 
@@ -21,11 +23,28 @@ connection.once("open",()=>{
 })
 
 
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+
+app.use((req, _res, next) => {
+  if (req.headers && req.headers.authorization && req.headers.authorization.split(" ")[0] === "Bearer") {
+    jwt.verify(req.headers.authorization.split(" ")[1], "cbc-secret-key-7973", (err, decode) => {
+      if (err) req.user = undefined;
+      req.user = decode;
+      next();
+    });
+  } else {
+    req.user = undefined;
+    next();
+  }
+
+
+});
+
 
 
 app.use("/api/users",userRouter);
 app.use("/api/products",productRouter);
+app.use("/api/orders",orderRouter);
 
 
 
