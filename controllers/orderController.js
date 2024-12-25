@@ -33,6 +33,40 @@ export async function createOrder(req, res) {
         }
 
         const newOrderData = req.body;
+
+        const newProductArray=[]
+
+        for(let i=0;i<newOrderData.orderItems.length;i++){
+            const product = await product.findOne({
+                productId : newOrderData.orderItems[i].productId
+
+            })
+            if(product==null){
+                res.json({
+                    message: "Product with "+newOrderData.orderItems[i].productId + " not found"
+                })
+                return
+            }
+            newProductArray[i] = {
+                productName : product.productName,
+                quantity : newOrderData.orderItems[i].quantity,
+                image : product.image,
+                price : product.price
+            }
+            console.log(newProductArray)
+
+            newOrderData.orderItems = newProductArray
+
+        }
+
+
+
+        // "productName": "Wireless Mouse",
+        // "quantity": 2,
+        // "image": "https://example.com/images/mouse.jpg",
+        // "price": 29.99
+
+
         newOrderData.orderId = orderId;
         newOrderData.email = req.user.email;
 
@@ -42,22 +76,23 @@ export async function createOrder(req, res) {
          
         res.json({
             message: "Order created"
-        })
-
-
-
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
 
-export async function getOrders(req, res) {
-
+export async function getOrders(req,res) {
 try {
-    const orders = await Order.find()
+    const orders = await Order.find({email : req.user.email})
     res.json(orders)
 } catch (error) {
-    res.status(500).json({ message: error.message });   
+    res.status(500).json({ 
+        message: error.message
+     })  
 
 }
 }
+
+
+    
