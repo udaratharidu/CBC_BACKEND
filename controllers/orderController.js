@@ -1,5 +1,6 @@
 import Order from "../models/order.js";
 import { isCustomer } from "./userController.js";
+import Product from "../models/product.js";
 
 export async function createOrder(req, res) {
 
@@ -43,7 +44,7 @@ export async function createOrder(req, res) {
             })
             if(product==null){
                 res.json({
-                    message: "Product with "+newOrderData.orderItems[i].productId + " not found"
+                    message: "Product with "+newOrderData.orderItems[i].productId+ " not found"
                 })
                 return
             }
